@@ -64,8 +64,11 @@ describe("Admin Dish Routes", () => {
       price: 150,
       category: "test",
       ingredients: "test",
+      image: "testing",
       featured: true,
     });
+
+    console.log("res body: ", res.body);
 
     expect(res.statusCode).toBe(201);
     expect(res.body.dish.name).toBe("Test Dish 2");
@@ -81,7 +84,7 @@ describe("Admin Dish Routes", () => {
       name: "Updated Test Dish",
       description: "test",
       price: 200,
-      image: "test",
+      image: "testing",
       category: "test",
       ingredients: "test",
       featured: false,

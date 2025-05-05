@@ -22,7 +22,7 @@ module.exports.addNewDish = wrapAsync(async (req, res) => {
     category,
     ingredients: ingredients.split(" "),
     featured,
-    image: imageUrl,
+    image: imageUrl || "testing_image",
   });
 
   await newDish.save();
@@ -33,15 +33,8 @@ module.exports.addNewDish = wrapAsync(async (req, res) => {
 });
 
 module.exports.editDish = wrapAsync(async (req, res) => {
-  const {
-    dishId,
-    name,
-    description,
-    price,
-    category,
-    ingredients,
-    featured,
-  } = req.body;
+  const { dishId, name, description, price, category, ingredients, featured } =
+    req.body;
 
   const imageUrl = req.file?.path;
 
@@ -54,7 +47,7 @@ module.exports.editDish = wrapAsync(async (req, res) => {
   dish.name = name;
   dish.description = description;
   dish.price = price;
-  dish.image = imageUrl;
+  dish.image = imageUrl || "testing";
   dish.category = category;
   if (ingredients) {
     dish.ingredients = ingredients.split(",").map((item) => item.trim());

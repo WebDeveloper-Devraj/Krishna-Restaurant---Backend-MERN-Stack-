@@ -14,7 +14,9 @@ app.use(express.static("public"));
 // Enable CORS so that your frontend can make requests
 app.use(
   cors({
-    origin: ["http://localhost:5173"], // Allow only frontend origin
+    origin: [
+      "http://localhost:5173, https://restaurant-backend-3qa8.onrender.com",
+    ], // Allow only frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Allow cookies and authentication headers
   })
@@ -34,7 +36,10 @@ app.use(
   require("../routes/admin/adminDashboardRoutes")
 );
 app.use("/restaurant/admin/dishes", require("../routes/admin/adminDishRoutes"));
-app.use("/restaurant/admin/orders", require("../routes/admin/adminOrderRoutes"));
+app.use(
+  "/restaurant/admin/orders",
+  require("../routes/admin/adminOrderRoutes")
+);
 
 app.use("*", (req, res, next) => {
   throw new ExpressError(404, "API route Not Found!");

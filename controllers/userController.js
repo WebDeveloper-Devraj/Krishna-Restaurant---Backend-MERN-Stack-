@@ -5,6 +5,7 @@ const { createSecretToken } = require("../util/SecretToken");
 const bcrypt = require("bcryptjs");
 const wrapAsync = require("../util/wrapAsync");
 const ExpressError = require("../util/ExpressError");
+const isProduction = process.env.NODE_ENV === "production";
 
 // jwt configuration
 module.exports.signup = wrapAsync(async (req, res, next) => {
@@ -32,8 +33,10 @@ module.exports.signup = wrapAsync(async (req, res, next) => {
 
   const token = createSecretToken(user._id);
   res.cookie("token", token, {
-    withCredentials: true,
     httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
+    maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
   });
 
   res
@@ -62,8 +65,10 @@ module.exports.login = wrapAsync(async (req, res, next) => {
 
   const token = createSecretToken(user._id);
   res.cookie("token", token, {
-    withCredentials: true,
     httpOnly: true,
+    secure: isProduction, // ✅ required for HTTPS (Render)
+    sameSite: isProduction ? "None" : "Lax", // ✅ allow cross-origin on Render
+    maxAge: 3 * 24 * 60 * 60 * 1000, // 3 day
   });
 
   res.status(201).json({
@@ -76,8 +81,8 @@ module.exports.login = wrapAsync(async (req, res, next) => {
 module.exports.logout = wrapAsync((req, res, next) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "Lax",
-    secure: false, // true if you're using HTTPS
+    sameSite: isProduction ? "None" : "Lax",
+    secure: isProduction,
   });
 
   res.status(200).json({ message: "Logged out successfully", success: true });
@@ -87,14 +92,10 @@ module.exports.updateUserProfile = wrapAsync(async (req, res) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
 
-  console.log(req.body);
-  console.log("user password: ", user.password);
-
   const { name, phoneNo, currentPassword, newPassword } = req.body;
 
   if (currentPassword && newPassword) {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    console.log("is match: ", isMatch);
     if (!isMatch) {
       throw new ExpressError(400, "current password is incorrect!");
     }
@@ -139,8 +140,8 @@ module.exports.deleteUser = wrapAsync(async (req, res) => {
 
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "LAX",
-    secure: true,
+    sameSite: isProduction ? "None" : "Lax",
+    secure: isProduction,
   });
 
   return res.json({ success: true, message: "Account deleted successfully!" });
