@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "krishna-restaurant-frontend-2j48m7gdu-devrajs-projects-3852097b.vercel.app",
+      "https://krishna-restaurant-frontend.vercel.app",
     ], // Allow only frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Allow cookies and authentication headers
