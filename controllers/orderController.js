@@ -13,7 +13,6 @@ module.exports.getOrdersOfUser = wrapAsync(async (req, res) => {
 });
 
 module.exports.placeOrder = wrapAsync(async (req, res) => {
-  console.log("called");
   const { userId, items, totalAmount, paymentMethod, paymentStatus } = req.body;
   const newOrder = new Order({
     userId,
